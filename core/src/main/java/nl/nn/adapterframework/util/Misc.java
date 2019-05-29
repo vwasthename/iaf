@@ -932,7 +932,16 @@ public class Misc {
 	}
 	
 	public static String hideAll(String inputString, String regex, int mode) {
-		StringBuilder result = new StringBuilder();
+		StringBuffer result = new StringBuffer();
+		if(mode==1) {
+			System.err.println("FROM FIRSTHALF HIDEALL METHOD  == "+regex);
+		}else {
+			System.err.println("HIDEALL METHOD  == "+regex);
+		}
+		if(inputString.length()>1000) {
+			System.err.println("INPUT OF HIDEALL METHOD  ::  "+ inputString.substring(0, 1000));
+		}
+		
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(inputString);
 		int previous = 0;

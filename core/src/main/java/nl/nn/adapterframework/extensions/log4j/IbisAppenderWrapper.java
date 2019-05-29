@@ -56,6 +56,7 @@ public class IbisAppenderWrapper extends AppenderSkeleton implements
 		}
 
 		if (StringUtils.isNotEmpty(hideRegex)) {
+			System.err.println("CALL TO HIDEALL FROM APPEND  "+ hideRegex);
 			modifiedMessage = Misc.hideAll(modifiedMessage, hideRegex);
 
 			if (throwableStrReps!=null) {
@@ -67,10 +68,13 @@ public class IbisAppenderWrapper extends AppenderSkeleton implements
 
 		String threadHideRegex = LogUtil.getThreadHideRegex();
 		if (StringUtils.isNotEmpty(threadHideRegex)) {
+			System.err.println("CALL TO HIDEALL FROM APPEND THREAD "+ hideRegex);
 			modifiedMessage = Misc.hideAll(modifiedMessage, threadHideRegex);
 
 			if (throwableStrReps!=null) {
+				System.err.println("THROWABLE STRING REPRESENTATION LENGTH  = "+ throwableStrReps.length);
 				for (int i=0; i<throwableStrReps.length; i++) {
+					System.err.println("THROWABLE STRING REPRESENTATION   = "+ throwableStrReps[i]);
 					throwableStrReps[i] = Misc.hideAll(throwableStrReps[i], threadHideRegex);
 				}
 			}

@@ -62,9 +62,10 @@ public class MessageKeeperMessage {
 			if (StringUtils.isNotEmpty(hideRegex)) {
 				message = Misc.hideAll(message, hideRegex);
 			}
-
+			
 			String threadHideRegex = LogUtil.getThreadHideRegex();
 			if (StringUtils.isNotEmpty(threadHideRegex)) {
+				System.err.println("FROM MASKMESSAGE PRINT REGEX  THREAD  == " + threadHideRegex );
 				message = Misc.hideAll(message, threadHideRegex);
 			}
 		}

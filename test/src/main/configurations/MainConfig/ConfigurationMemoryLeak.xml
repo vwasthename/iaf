@@ -54,8 +54,7 @@
 				<exit path="READY" state="success" />
 			</exits>
 			<pipe name="Pass through"
-				className="nl.nn.adapterframework.pipes.GenericMessageSendingPipe"
-				hideRegex="">
+				className="nl.nn.adapterframework.pipes.GenericMessageSendingPipe">
 				<sender javaListener="Starstar4"
 					className="nl.nn.adapterframework.senders.IbisLocalSender">
 					<param name="*" sessionKey="*" />
@@ -180,8 +179,8 @@
 			</exits>
 			<pipe name="Pass through"
 				className="nl.nn.adapterframework.pipes.GenericMessageSendingPipe">
-				<sender
-					className="nl.nn.adapterframework.senders.EchoSender">
+				<sender javaListener="Starstar10"
+					className="nl.nn.adapterframework.senders.IbisLocalSender">
 				</sender>
 				<forward name="success" path="READY" />
 			</pipe>
@@ -199,8 +198,8 @@
 				<exit path="READY" state="success" />
 			</exits>
 			<pipe name="Pass through"
-				className="nl.nn.adapterframework.pipes.GenericMessageSendingPipe">
-				<sender
+				className="nl.nn.adapterframework.pipes.GenericMessageSendingPipe" hideRegex="a.*as">
+				<sender 
 					className="nl.nn.adapterframework.senders.EchoSender">
 				</sender>
 				<forward name="success" path="READY" />

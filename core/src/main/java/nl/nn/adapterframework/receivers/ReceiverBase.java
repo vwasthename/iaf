@@ -847,6 +847,7 @@ public class ReceiverBase implements IReceiver, IReceiverStatistics, IMessageHan
 				}
 			}
 			if (hideRegex != null){
+				System.err.println("FROM RECEIVERBASE PRINT REGEX  == " + hideRegex );
 				if (getHideMethod().equalsIgnoreCase("FIRSTHALF")) {
 					message = Misc.hideFirstHalf(message, hideRegex);
 				} else {

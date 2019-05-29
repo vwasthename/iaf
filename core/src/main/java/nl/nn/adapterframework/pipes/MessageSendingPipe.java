@@ -579,6 +579,7 @@ public class MessageSendingPipe extends FixedForwardPipe implements HasSender, H
 							label=labelTp.transform((String)input,null);
 						}
 					}
+					System.err.println("FROM MESSAGESENDINGPIPE PRINT REGEX  == " + hideRegex );
 					if (sender instanceof MailSender) {
 						String messageInMailSafeForm = (String)session.get("messageInMailSafeForm");
 						if (hideRegex != null){

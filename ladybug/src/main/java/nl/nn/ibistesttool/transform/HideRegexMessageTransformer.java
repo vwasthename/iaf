@@ -37,11 +37,13 @@ public class HideRegexMessageTransformer implements MessageTransformer {
 	public String transform(String message) {
 		if (message != null) {
 			if (StringUtils.isNotEmpty(hideRegex)) {
+				System.err.println("CALL TO HIDEALL FROM TRANSFORM (LADYBUG) "+ hideRegex);
 				message = Misc.hideAll(message, hideRegex);
 			}
 
 			String threadHideRegex = LogUtil.getThreadHideRegex();
 			if (StringUtils.isNotEmpty(threadHideRegex)) {
+				System.err.println("CALL TO HIDEALL FROM TRANSFORM (LADYBUG) thread  "+ threadHideRegex);
 				message = Misc.hideAll(message, threadHideRegex);
 			}
 		}
