@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.SAXParser;
@@ -191,6 +192,7 @@ public class ReceiverBase implements IReceiver, IReceiverStatistics, IMessageHan
     
 	private String returnedSessionKeys=null;
 	private String hideRegex = null;
+	private Pattern hideRegexPattern = null;
 	private String hideMethod = "all";
 	private String hiddenInputSessionKeys=null;
 	private boolean checkForDuplicates=false;
@@ -846,12 +848,11 @@ public class ReceiverBase implements IReceiver, IReceiverStatistics, IMessageHan
 					sobj=message;
 				}
 			}
-			if (hideRegex != null){
-				System.err.println("FROM RECEIVERBASE PRINT REGEX  == " + hideRegex );
+			if (StringUtils.isNotEmpty(hideRegex)){
 				if (getHideMethod().equalsIgnoreCase("FIRSTHALF")) {
-					message = Misc.hideFirstHalf(message, hideRegex);
+					message = Misc.hideFirstHalf(message, hideRegexPattern);
 				} else {
-					message = Misc.hideAll(message, hideRegex);
+					message = Misc.hideAll(message, hideRegexPattern);
 				}
 				sobj=message;
 			}
@@ -2146,6 +2147,9 @@ public class ReceiverBase implements IReceiver, IReceiverStatistics, IMessageHan
 	@IbisDoc({"regular expression to mask strings in the error/logstore. everything character between to strings in this expression will be replaced by a '*'that fits the expression is replaced. for example, the regular expression (?&lt;=&lt;party&gt;).*?(?=&lt;/party&gt;) will replace every character between keys<party> and </party> ", ""})
 	public void setHideRegex(String hideRegex) {
 		this.hideRegex = hideRegex;
+		if(StringUtils.isNotEmpty(hideRegex)) {
+			hideRegexPattern = Pattern.compile(hideRegex);
+		}
 	}
 
 	public String getHideRegex() {

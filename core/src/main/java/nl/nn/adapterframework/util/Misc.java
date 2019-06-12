@@ -74,7 +74,7 @@ public class Misc {
 	private static Long responseBodySizeWarnByDefault = null;
 	private static Boolean forceFixedForwardingByDefault = null;
 	private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
-
+	
 	/**
 	* Creates a Universally Unique Identifier, via the java.rmi.server.UID class.
 	*/
@@ -923,28 +923,19 @@ public class Misc {
 		return defaultValue;
 	}
 	
-	public static String hideFirstHalf(String inputString, String regex) {
+	public static String hideFirstHalf(String inputString, Pattern regex) {
 		return hideAll(inputString, regex, 1);
 	}
 	
-	public static String hideAll(String inputString, String regex) {
-		return hideAll(inputString, regex, 0);
+	public static String hideAll(String inputString, Pattern regexPattern) {
+		return hideAll(inputString, regexPattern, 0);
 	}
 	
-	public static String hideAll(String inputString, String regex, int mode) {
-		StringBuffer result = new StringBuffer();
-		if(mode==1) {
-			System.err.println("FROM FIRSTHALF HIDEALL METHOD  == "+regex);
-		}else {
-			System.err.println("HIDEALL METHOD  == "+regex);
-		}
-		if(inputString.length()>1000) {
-			System.err.println("INPUT OF HIDEALL METHOD  ::  "+ inputString.substring(0, 1000));
-		}
-		
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(inputString);
+	public static String hideAll(String inputString, Pattern regexPattern, int mode) {
+		StringBuilder result = new StringBuilder();
+		Matcher matcher = regexPattern.matcher(inputString);
 		int previous = 0;
+		int lengthOfInput = inputString.length();
 		while (matcher.find()) {
 			result.append(inputString.substring(previous, matcher.start()));
 			int len = matcher.end() - matcher.start();
@@ -958,7 +949,7 @@ public class Misc {
 			}
 			previous = matcher.end();
 		}
-		result.append(inputString.substring(previous, inputString.length()));
+		result.append(inputString.substring(previous, lengthOfInput));
 		return result.toString();
 	}
 

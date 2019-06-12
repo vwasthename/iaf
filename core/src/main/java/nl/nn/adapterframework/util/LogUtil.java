@@ -26,7 +26,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Hierarchy;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -51,11 +53,12 @@ public class LogUtil {
 	public static final String LOG4J_XML_FILE = "log4j4ibis.xml";
 	public static final String LOG4J_PROPS_FILE = "log4j4ibis.properties";
 
-	private static ThreadLocal<String> threadLocal_hideRegex = new ThreadLocal<String>();
+	private static ThreadLocal<Pattern> threadLocal_hideRegex = new ThreadLocal<Pattern>();
 
 	private static Properties log4jProperties;
 	private static Hierarchy hierarchy = null;
 	private static String hideRegex;
+	private static Pattern hideRegexPattern;
 
 	static {
 		if (System.getProperty("log.dir") == null) {
@@ -168,6 +171,9 @@ public class LogUtil {
 		if (hideRegex != null) {
 			hideRegex = XmlUtils.decodeChars(hideRegex);
 		}
+		if(StringUtils.isNotEmpty(hideRegex)) {
+			hideRegexPattern = Pattern.compile(hideRegex);
+		}
 	}
 
 	public static Logger getRootLogger() {
@@ -243,15 +249,16 @@ public class LogUtil {
 		}
 	}
 
-	public static String getLog4jHideRegex() {
-		return hideRegex;
+	public static Pattern getLog4jHideRegex() {
+		return hideRegexPattern;
 	}
 
 	public static void setThreadHideRegex(String hideRegex) {
-		threadLocal_hideRegex.set(hideRegex);
+		Pattern pattern = Pattern.compile(hideRegex);
+		threadLocal_hideRegex.set(pattern);
 	}
 
-	public static String getThreadHideRegex() {
+	public static Pattern getThreadHideRegex() {
 		return threadLocal_hideRegex.get();
 	}
 

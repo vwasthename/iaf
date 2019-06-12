@@ -16,6 +16,7 @@
 package nl.nn.adapterframework.util;
 
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -58,14 +59,13 @@ public class MessageKeeperMessage {
 
 	private String maskMessage(String message) {
 		if (StringUtils.isNotEmpty(message)) {
-			String hideRegex = LogUtil.getLog4jHideRegex();
-			if (StringUtils.isNotEmpty(hideRegex)) {
+			Pattern hideRegex = LogUtil.getLog4jHideRegex();
+			if (hideRegex != null) {
 				message = Misc.hideAll(message, hideRegex);
 			}
 			
-			String threadHideRegex = LogUtil.getThreadHideRegex();
-			if (StringUtils.isNotEmpty(threadHideRegex)) {
-				System.err.println("FROM MASKMESSAGE PRINT REGEX  THREAD  == " + threadHideRegex );
+			Pattern threadHideRegex = LogUtil.getThreadHideRegex();
+			if (threadHideRegex != null) {
 				message = Misc.hideAll(message, threadHideRegex);
 			}
 		}

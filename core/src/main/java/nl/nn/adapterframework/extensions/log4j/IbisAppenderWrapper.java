@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import nl.nn.adapterframework.util.LogUtil;
 import nl.nn.adapterframework.util.Misc;
@@ -26,6 +27,7 @@ public class IbisAppenderWrapper extends AppenderSkeleton implements
 		AppenderAttachable {
 	protected int maxMessageLength = -1;
 	protected String hideRegex;
+	private Pattern hideRegexPattern;
 	
 	private final List<Appender> appenders = new ArrayList<Appender>();
 
@@ -55,26 +57,20 @@ public class IbisAppenderWrapper extends AppenderSkeleton implements
 			throwableStrReps = throwableInfo.getThrowableStrRep();
 		}
 
-		if (StringUtils.isNotEmpty(hideRegex)) {
-			System.err.println("CALL TO HIDEALL FROM APPEND  "+ hideRegex);
-			modifiedMessage = Misc.hideAll(modifiedMessage, hideRegex);
-
+		if (hideRegexPattern != null) {
+			modifiedMessage = Misc.hideAll(modifiedMessage, hideRegexPattern);
 			if (throwableStrReps!=null) {
 				for (int i=0; i<throwableStrReps.length; i++) {
-					throwableStrReps[i] = Misc.hideAll(throwableStrReps[i], hideRegex);
+					throwableStrReps[i] = Misc.hideAll(throwableStrReps[i], hideRegexPattern);
 				}
 			}
 		}
 
-		String threadHideRegex = LogUtil.getThreadHideRegex();
-		if (StringUtils.isNotEmpty(threadHideRegex)) {
-			System.err.println("CALL TO HIDEALL FROM APPEND THREAD "+ hideRegex);
+		Pattern threadHideRegex = LogUtil.getThreadHideRegex();
+		if(threadHideRegex != null ){
 			modifiedMessage = Misc.hideAll(modifiedMessage, threadHideRegex);
-
 			if (throwableStrReps!=null) {
-				System.err.println("THROWABLE STRING REPRESENTATION LENGTH  = "+ throwableStrReps.length);
 				for (int i=0; i<throwableStrReps.length; i++) {
-					System.err.println("THROWABLE STRING REPRESENTATION   = "+ throwableStrReps[i]);
 					throwableStrReps[i] = Misc.hideAll(throwableStrReps[i], threadHideRegex);
 				}
 			}
@@ -165,7 +161,8 @@ public class IbisAppenderWrapper extends AppenderSkeleton implements
 		return hideRegex;
 	}
 
-	public void setHideRegex(String string) {
-		hideRegex = string;
+	public void setHideRegex(String hideRegex) {
+		this.hideRegex = hideRegex;
+		this.hideRegexPattern = Pattern.compile(hideRegex);
 	}
 }

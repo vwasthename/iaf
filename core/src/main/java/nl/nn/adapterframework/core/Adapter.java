@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import nl.nn.adapterframework.cache.ICacheAdapter;
 import nl.nn.adapterframework.configuration.Configuration;
@@ -135,8 +136,6 @@ public class Adapter implements IAdapter, NamedBean {
 	
 	private TaskExecutor taskExecutor;
 	
-	private String composedHideRegex;
-
 	/**
 	 * Indicates whether the configuration succeeded.
 	 */
@@ -197,7 +196,10 @@ public class Adapter implements IAdapter, NamedBean {
 			sb.append(")");
 		}
 		if (sb.length() > 0) {
-			composedHideRegex = sb.toString();
+			String composedHideRegex = sb.toString();
+			if (StringUtils.isNotEmpty(composedHideRegex)) {
+				LogUtil.setThreadHideRegex(composedHideRegex);
+			}
 		}
 	}
 
@@ -596,10 +598,6 @@ public class Adapter implements IAdapter, NamedBean {
 		try {
 			if (ndcChanged) {
 				NDC.push(newNDC);
-			}
-
-			if (StringUtils.isNotEmpty(composedHideRegex)) {
-				LogUtil.setThreadHideRegex(composedHideRegex);
 			}
 
 			//if (isRequestReplyLogging()) {

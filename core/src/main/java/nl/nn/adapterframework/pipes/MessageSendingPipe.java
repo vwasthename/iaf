@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import nl.nn.adapterframework.doc.IbisDoc;
 import org.apache.commons.codec.binary.Base64;
@@ -211,7 +212,7 @@ public class MessageSendingPipe extends FixedForwardPipe implements HasSender, H
 	private PipeProcessor pipeProcessor;
 	private ListenerProcessor listenerProcessor;
 
-	private String hideRegex = null;
+	private Pattern hideRegexPattern = null;
 	private String hideMethod = "all";
 
 	private boolean streamResultToServlet=false;
@@ -579,24 +580,23 @@ public class MessageSendingPipe extends FixedForwardPipe implements HasSender, H
 							label=labelTp.transform((String)input,null);
 						}
 					}
-					System.err.println("FROM MESSAGESENDINGPIPE PRINT REGEX  == " + hideRegex );
 					if (sender instanceof MailSender) {
 						String messageInMailSafeForm = (String)session.get("messageInMailSafeForm");
-						if (hideRegex != null){
+						if (hideRegexPattern != null){
 							if (getHideMethod().equalsIgnoreCase("FIRSTHALF")) {
-								messageInMailSafeForm = Misc.hideFirstHalf(messageInMailSafeForm, hideRegex);
+								messageInMailSafeForm = Misc.hideFirstHalf(messageInMailSafeForm, hideRegexPattern);
 							} else {
-								messageInMailSafeForm = Misc.hideAll(messageInMailSafeForm, hideRegex);
+								messageInMailSafeForm = Misc.hideAll(messageInMailSafeForm, hideRegexPattern);
 							}
 						}
 						messageLog.storeMessage(storedMessageID,correlationID,new Date(),messageTrail,label,messageInMailSafeForm);
 					} else {
 						String message = (String)input;
-						if (hideRegex != null){
+						if (hideRegexPattern != null){
 							if (getHideMethod().equalsIgnoreCase("FIRSTHALF")) {
-								message = Misc.hideFirstHalf(message, hideRegex);
+								message = Misc.hideFirstHalf(message, hideRegexPattern);
 							} else {
-								message = Misc.hideAll(message, hideRegex);
+								message = Misc.hideAll(message, hideRegexPattern);
 							}
 						}
 						messageLog.storeMessage(storedMessageID,correlationID,new Date(),messageTrail,label,message);
@@ -1205,12 +1205,10 @@ public class MessageSendingPipe extends FixedForwardPipe implements HasSender, H
 	}
 	
 	@IbisDoc({"next to common usage in {@link abstractpipe}, also strings in the error/logstore are masked", ""})
+	@Override
 	public void setHideRegex(String hideRegex) {
-		this.hideRegex = hideRegex;
-	}
-
-	public String getHideRegex() {
-		return hideRegex;
+		hideRegexPattern = Pattern.compile(hideRegex);
+		super.setHideRegex(hideRegex);
 	}
 
 	@IbisDoc({"(only used when hideregex is not empty and only applies to error/logstore) either <code>all</code> or <code>firsthalf</code>. when <code>firsthalf</code> only the first half of the string is masked, otherwise (<code>all</code>) the entire string is masked", "all"})

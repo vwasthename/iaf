@@ -15,11 +15,12 @@
 */
 package nl.nn.ibistesttool.transform;
 
+import java.util.regex.Pattern;
+
+import nl.nn.adapterframework.util.AppConstants;
 import nl.nn.adapterframework.util.LogUtil;
 import nl.nn.adapterframework.util.Misc;
 import nl.nn.testtool.transform.MessageTransformer;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Hide the same data as is hidden in the Ibis logfiles based on the
@@ -28,34 +29,38 @@ import org.apache.commons.lang.StringUtils;
  * @author Jaco de Groot
  */
 public class HideRegexMessageTransformer implements MessageTransformer {
-	String hideRegex;
-
+	Pattern hideRegexPattern = null;
+	private final int maxMessageLength = AppConstants.getInstance().getInt("ibistesttool.maxMessageLength", 1024);
+	private final boolean limitMessageOnlyWhenHideRegexIsUsed = AppConstants.getInstance().getBoolean("ibistesttool.limitMessageWhenHideRegexIsUsed", false);
+	
 	HideRegexMessageTransformer() {
-		hideRegex = LogUtil.getLog4jHideRegex();
+		hideRegexPattern = LogUtil.getLog4jHideRegex();
 	}
 
 	public String transform(String message) {
+		if (maxMessageLength >= 0
+				&& message.length() > maxMessageLength) {
+			message = message.substring(0, maxMessageLength) + "...(" + (message.length() - maxMessageLength) + " characters more)";
+		}
 		if (message != null) {
-			if (StringUtils.isNotEmpty(hideRegex)) {
-				System.err.println("CALL TO HIDEALL FROM TRANSFORM (LADYBUG) "+ hideRegex);
-				message = Misc.hideAll(message, hideRegex);
+			if (hideRegexPattern != null) {
+				message = Misc.hideAll(message, hideRegexPattern);
 			}
 
-			String threadHideRegex = LogUtil.getThreadHideRegex();
-			if (StringUtils.isNotEmpty(threadHideRegex)) {
-				System.err.println("CALL TO HIDEALL FROM TRANSFORM (LADYBUG) thread  "+ threadHideRegex);
+			Pattern threadHideRegex = LogUtil.getThreadHideRegex();
+			if (threadHideRegex != null) {
 				message = Misc.hideAll(message, threadHideRegex);
 			}
 		}
 		return message;
 	}
 
-	public String getHideRegex() {
-		return hideRegex;
+	public Pattern getHideRegex() {
+		return hideRegexPattern;
 	}
 
-	public void setHideRegex(String string) {
-		hideRegex = string;
+	public void setHideRegex(Pattern pattern) {
+		hideRegexPattern = pattern;
 	}
 
 }
