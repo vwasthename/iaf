@@ -38,10 +38,10 @@ public class HideRegexMessageTransformer implements MessageTransformer {
 	}
 
 	public String transform(String message) {
-		if (maxMessageLength >= 0
-				&& message.length() > maxMessageLength) {
-			message = message.substring(0, maxMessageLength) + "...(" + (message.length() - maxMessageLength) + " characters more)";
-		}
+//		if (maxMessageLength >= 0
+//				&& message.length() > maxMessageLength) {
+//			message = message.substring(0, maxMessageLength) + "...(" + (message.length() - maxMessageLength) + " characters more)";
+//		}
 		if (message != null) {
 			if (hideRegexPattern != null) {
 				message = Misc.hideAll(message, hideRegexPattern);
