@@ -15,11 +15,10 @@
 */
 package nl.nn.adapterframework.extensions.aspose.pipe;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -40,8 +39,9 @@ import nl.nn.adapterframework.extensions.aspose.services.conv.CisConversionServi
 import nl.nn.adapterframework.extensions.aspose.services.conv.impl.AsposeLicenseLoader;
 import nl.nn.adapterframework.extensions.aspose.services.conv.impl.CisConversionServiceImpl;
 import nl.nn.adapterframework.extensions.aspose.services.conv.impl.convertors.PdfAttachmentUtil;
-import nl.nn.adapterframework.pipes.FixedForwardPipe;
 import nl.nn.adapterframework.stream.Message;
+import nl.nn.adapterframework.stream.MessageOutputStream;
+import nl.nn.adapterframework.stream.StreamingPipe;
 import nl.nn.adapterframework.util.ClassUtils;
 import nl.nn.adapterframework.util.XmlBuilder;
 
@@ -51,7 +51,7 @@ import nl.nn.adapterframework.util.XmlBuilder;
  * @author M64D844
  *
  */
-public class PdfPipe extends FixedForwardPipe {
+public class PdfPipe extends StreamingPipe {
 
 	private boolean saveSeparate = false;
 	private String pdfOutputLocation = null;
@@ -143,12 +143,19 @@ public class PdfPipe extends FixedForwardPipe {
 				// Get file name of attachment
 				String fileNameToAttach = Message.asString(session.get(fileNameToAttachSessionKey));
 	
-				InputStream result = PdfAttachmentUtil.combineFiles(mainPdf, binaryInputStream, fileNameToAttach + ".pdf");
+				try (MessageOutputStream target=MessageOutputStream.getTargetStream(this, session, getNextPipe())) {
+					try (OutputStream out = target.asStream()) {
+						PdfAttachmentUtil.combineFiles(mainPdf, binaryInputStream, fileNameToAttach + ".pdf", out);
+					}
+					session.put("CONVERSION_OPTION", ConversionOption.SINGLEPDF);
+					session.put(mainDocumentSessionKey, target.getPipeRunResult().getResult());
+					return target.getPipeRunResult();
+				} catch (Exception e) {
+					throw new PipeRunException(this, getLogPrefix(session)+"cannot combine pdfs",e);
+				}
 	
-				session.put("CONVERSION_OPTION", ConversionOption.SINGLEPDF);
-				session.put(mainDocumentSessionKey, result);
-	
-			} else if ("convert".equalsIgnoreCase(action)) {
+			} 
+			if ("convert".equalsIgnoreCase(action)) {
 				String fileName = (String) session.get("fileName");
 				CisConversionResult cisConversionResult = null;
 				CisConversionService cisConversionService = new CisConversionServiceImpl(pdfOutputLocation, loader.getPathToExtractFonts());

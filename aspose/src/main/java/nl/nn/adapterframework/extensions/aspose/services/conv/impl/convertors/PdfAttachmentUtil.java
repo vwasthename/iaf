@@ -16,15 +16,14 @@
 package nl.nn.adapterframework.extensions.aspose.services.conv.impl.convertors;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
 
 import com.aspose.pdf.Document;
@@ -161,15 +160,11 @@ public class PdfAttachmentUtil {
 		return pdfDocument;
 	}
 
-	public static InputStream combineFiles(InputStream parent, InputStream attachment, String fileNameToAttach) {
+	public static void combineFiles(InputStream parent, InputStream attachment, String fileNameToAttach, OutputStream out) throws IOException {
 		Document pdfDoc = new Document(parent);
 		pdfDoc.setPageMode(PageMode.UseAttachments);
-
 		pdfDoc.getEmbeddedFiles().add(new FileSpecification(attachment, fileNameToAttach));
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		pdfDoc.save(baos, SaveFormat.Pdf);
-		return new ByteArrayInputStream(baos.toByteArray());
+		pdfDoc.save(out, SaveFormat.Pdf);
 	}
 
 }
