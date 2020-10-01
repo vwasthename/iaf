@@ -50,58 +50,69 @@ public class ExchangeFolderSender extends FileSystemSender<Item,ExchangeFileSyst
 		getFileSystem().setMailAddress(mailAddress);
 	}
 
-	@IbisDocRef({"3", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"2", EXCHANGE_FILE_SYSTEM})
 	public void setUrl(String url) {
 		getFileSystem().setUrl(url);
 	}
 
-
-	@IbisDocRef({"4", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"3", EXCHANGE_FILE_SYSTEM})
 	public void setAccessToken(String accessToken) {
 		getFileSystem().setAccessToken(accessToken);
 	}
 
+	@IbisDocRef({"4", EXCHANGE_FILE_SYSTEM})
+	@Deprecated
+	public void setUsername(String username) {
+		getFileSystem().setUsername(username);
+	}
+	
+	@Deprecated
 	@IbisDocRef({"5", EXCHANGE_FILE_SYSTEM})
+	public void setPassword(String password) {
+		getFileSystem().setPassword(password);
+	}
+
+	@IbisDocRef({"6", EXCHANGE_FILE_SYSTEM})
 	public void setAuthAlias(String authAlias) {
 		getFileSystem().setAuthAlias(authAlias);
 	}
 
-	@IbisDocRef({"6", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"7", EXCHANGE_FILE_SYSTEM})
 	public void setBaseFolder(String baseFolder) {
 		getFileSystem().setBaseFolder(baseFolder);
 	}
 
-	@IbisDocRef({"7", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"8", EXCHANGE_FILE_SYSTEM})
 	public void setFilter(String filter) {
 		getFileSystem().setFilter(filter);
 	}
 
-	@IbisDocRef({"8", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"9", EXCHANGE_FILE_SYSTEM})
 	public void setProxyHost(String proxyHost) {
 		getFileSystem().setProxyHost(proxyHost);
 	}
 
-	@IbisDocRef({"9", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"10", EXCHANGE_FILE_SYSTEM})
 	public void setProxyPort(int proxyPort) {
 		getFileSystem().setProxyPort(proxyPort);
 	}
 
-	@IbisDocRef({"10", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"11", EXCHANGE_FILE_SYSTEM})
 	public void setProxyUserName(String proxyUsername) {
 		getFileSystem().setProxyUsername(proxyUsername);
 	}
 
-	@IbisDocRef({"11", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"12", EXCHANGE_FILE_SYSTEM})
 	public void setProxyPassword(String proxyPassword) {
 		getFileSystem().setProxyPassword(proxyPassword);
 	}
 
-	@IbisDocRef({"12", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"13", EXCHANGE_FILE_SYSTEM})
 	public void setProxyAuthAlias(String proxyAuthAlias) {
 		getFileSystem().setProxyAuthAlias(proxyAuthAlias);
 	}
 
-	@IbisDocRef({"13", EXCHANGE_FILE_SYSTEM})
+	@IbisDocRef({"14", EXCHANGE_FILE_SYSTEM})
 	public void setProxyDomain(String domain) {
 		getFileSystem().setProxyDomain(domain);
 	}
