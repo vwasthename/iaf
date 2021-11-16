@@ -1,5 +1,5 @@
 /*
-   Copyright 2013 Nationale-Nederlanden
+   Copyright 2013 Nationale-Nederlanden, 2021 WeAreFrank!
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
 */
 package nl.nn.adapterframework.parameters;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,6 +25,7 @@ import nl.nn.adapterframework.configuration.ConfigurationException;
 import nl.nn.adapterframework.core.ParameterException;
 import nl.nn.adapterframework.core.PipeLineSession;
 import nl.nn.adapterframework.stream.Message;
+import nl.nn.adapterframework.util.Counter;
 
 
 /**
@@ -31,39 +33,47 @@ import nl.nn.adapterframework.stream.Message;
  * 
  * @author Gerrit van Brakel
  */
-public class ParameterList extends ArrayList<Parameter> {
+public class ParameterList implements Iterable<Parameter> {
+	private Map<String, Parameter> map = new LinkedHashMap<>();
+	private Counter count = new Counter(0);
 
 	public ParameterList() {
 		super();
 	}
 
-	public ParameterList(int i) {
-		super(i);
-	}
-
 	public void configure() throws ConfigurationException {
-		for (int i=0; i<size(); i++) {
-			Parameter param = getParameter(i);
-			if (StringUtils.isEmpty(param.getName())) {
-				param.setName("parameter" + i);
-			}
-
+		for(Parameter param : this) {
 			param.configure();
+			//set name?
 		}
 	}
 
+	public void add(Parameter parameter) {
+		if(parameter == null) {
+			throw new IllegalStateException("No parameter defined");
+		}
+
+		map.put(parameter.getName(), parameter);
+	}
+
+	public boolean contains(String name) {
+		return map.containsKey(name);
+	}
+
+	@Deprecated
 	public Parameter getParameter(int i) {
-		return get(i);
+		int index = 0;
+		for(Parameter p : this) {
+			if(i == index) {
+				return p;
+			}
+			index++;
+		}
+		return null;
 	}
 
 	public Parameter findParameter(String name) {
-		for (Iterator<Parameter> it=iterator();it.hasNext();) {
-			Parameter p = it.next();
-			if (p!=null && p.getName().equals(name)) {
-				return p;
-			}
-		}
-		return null;
+		return map.get(name);
 	}
 
 	public boolean parameterEvaluationRequiresInputMessage() {
@@ -113,5 +123,22 @@ public class ParameterList extends ArrayList<Parameter> {
 
 	private ParameterValue getValue(ParameterValueList alreadyResolvedParameters, Parameter p, Message message, PipeLineSession session, boolean namespaceAware) throws ParameterException {
 		return new ParameterValue(p, p.getValue(alreadyResolvedParameters, message, session, namespaceAware));
+	}
+
+	public int size() {
+		return map.size();
+	}
+
+	@Override
+	public Iterator<Parameter> iterator() {
+		return map.values().iterator();
+	}
+
+	protected Parameter get(String name) {
+		return map.get(name);
+	}
+
+	protected Parameter remove(String name) {
+		return map.remove(name);
 	}
 }
