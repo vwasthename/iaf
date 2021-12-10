@@ -2,7 +2,7 @@
 
 ## Security Is Everyone's Responsibility
 
-It is important to remember that the security of your Frank! application is
+It is important to remember ttesthat the security of your Frank! application is
 the result of the overall security of the hosting stack
 (*Java*, *Application Server*), Frank!Framework itself, all Java dependencies and
 your code. As such, it is your responsibility to follow a few important best
